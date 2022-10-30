@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/KevinPXu/Employee-Tracker/issues"
   },
-  "homepage": "https://github.com/KevinPXu/Employee-Tracker#readme"
+  "homepage": "https://github.com/KevinPXu/Employee-Tracker#readme",
+  "dependencies": {
+    "inquirer": "^8.2.4",
+    "mysql2": "^2.2.5"
+  }
 }
