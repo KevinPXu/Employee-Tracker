@@ -11,3 +11,32 @@ const db = mysql.createConnection(
   },
   console.log(`employee.db database connection successful`)
 );
+
+init();
+
+async function init(){
+    do{
+        var {choice} = await initChoice();
+        
+        switch
+
+    }while(choice !== "quit");
+}
+
+async function initChoice(){
+    const res = inquirer.prompt({
+        type: "list",
+        message: "What would you like to do?",
+        name: "choice",
+        choices: [
+            "view all departments",
+            "view all roles",
+            "view all employees", 
+            "add a department", 
+            "add a role",
+            "add an employee", 
+            "update an employee role",
+            "quit"]
+    });
+    return res;
+}
