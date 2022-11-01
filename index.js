@@ -39,15 +39,21 @@ async function init() {
     case "Add a department":
       addDepartment();
       break;
+
     case "Add a role":
       addRole(await getDepartmentList());
       break;
+
     case "Add an employee":
       addEmployee(await getRoles(), await getManager());
       break;
+
     case "Update an employee role":
+      updateEmployeeRole(await getEmployee(), await getRoles());
       break;
+
     default:
+      db.end();
       break;
   }
 }
@@ -239,6 +245,51 @@ async function addEmployee(roleName, managerName) {
         console.error(err);
       }
       console.log("successfully added employee");
+    }
+  );
+  init();
+}
+
+function getEmployee() {
+  return new Promise((resolve, reject) => {
+    db.query(
+      'SELECT CONCAT(employees.first_name, " ", employees.last_name) AS employeeName FROM employees',
+      (err, results) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(results.map((object) => object.employeeName));
+      }
+    );
+  });
+}
+
+async function updateEmployeeRole(employeeName, roleName) {
+  let { employee, role } = await inquirer.prompt([
+    {
+      type: "list",
+      message: "Which employee's role do you want to update?",
+      name: "employee",
+      choices: employeeName,
+    },
+    {
+      type: "list",
+      message: "Which role do you want to assign the selected employee?",
+      name: "role",
+      choices: roleName,
+    },
+  ]);
+  let fullName = employee.split(" ");
+  console.log(fullName);
+
+  db.query(
+    "UPDATE employees SET roles_id = (SELECT roles_id FROM roles WHERE roles.job_title = ?) WHERE first_name = ? AND last_name = ?",
+    [role, fullName[0], fullName[1]],
+    (err, results) => {
+      if (err) {
+        console.error(err);
+      }
+      console.log("successfully updated employee's role");
     }
   );
   init();
