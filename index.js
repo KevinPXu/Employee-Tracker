@@ -239,7 +239,6 @@ async function updateEmployeeRole(employeeName, roleName) {
     },
   ]);
   let fullName = employee.split(" ");
-  console.log(fullName);
 
   //query to update the employee by setting the roles id where the job_title matches that of role for the selected employee
   db.query(

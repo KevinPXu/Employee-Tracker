@@ -18,7 +18,7 @@ This project was use as an introduction to the mysql database structure and as a
 
 ## Demonstration
 
-![note taker gif](./Assets/Note%20Taker.gif)
+View demo: https://drive.google.com/file/d/1PP7U4nKMJlfxlTPIa4AVQvfEmG5sNTT1/view
 
 ## Description
 
@@ -39,7 +39,7 @@ const db = mysql.createConnection(
   console.log(`employee.db database connection successful`)
 );
 
-//checks if the connection to the database was successful before calling the init function
+
 db.connect((err, result) => {
   if (err) {
     console.error(err);
