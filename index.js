@@ -299,7 +299,13 @@ function getManager() {
       if (err) {
         reject(err);
       }
-      resolve(results.map((object) => object.manager_name));
+      resolve(
+        results
+          .map((object) => object.manager_name)
+          .filter((element) => {
+            return element !== null;
+          })
+      );
     });
   });
 }
