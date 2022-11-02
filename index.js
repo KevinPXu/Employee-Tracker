@@ -299,12 +299,14 @@ function getManager() {
       if (err) {
         reject(err);
       }
+      let tempArr = results
+        .map((object) => object.manager_name)
+        .filter((element) => {
+          return element !== null;
+        });
+
       resolve(
-        results
-          .map((object) => object.manager_name)
-          .filter((element) => {
-            return element !== null;
-          })
+        tempArr.filter((element, index) => tempArr.indexOf(element) === index)
       );
     });
   });
