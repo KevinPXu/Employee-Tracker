@@ -13,6 +13,7 @@ const db = mysql.createConnection(
   console.log(`employee.db database connection successful`)
 );
 
+//checks if the connection to the database was successful before calling the init function
 db.connect((err, result) => {
   if (err) {
     console.error(err);
@@ -21,6 +22,7 @@ db.connect((err, result) => {
   init();
 });
 
+//initial function that is run each time a new option is chosen and is reiterated until quit is chosen.
 async function init() {
   let { choice } = await initChoice();
   switch (choice) {
@@ -129,7 +131,7 @@ async function addDepartment() {
     message: "What is the name of the department",
     name: "departmentName",
   });
-
+  //inserts a new department to the departments table based using the departmentName variable
   db.query(
     "INSERT INTO departments (departments_name) VALUES (?)",
     departmentName,
@@ -144,17 +146,7 @@ async function addDepartment() {
   init();
 }
 
-function getDepartmentList() {
-  return new Promise((resolve, reject) => {
-    db.query("SELECT departments_name FROM departments", (err, results) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(results.map((object) => object.departments_name));
-    });
-  });
-}
-
+//adds a role to the role database connecting it to a department
 async function addRole(departmentNames) {
   let { roleName, salary, whichDepartment } = await inquirer.prompt([
     {
@@ -174,7 +166,7 @@ async function addRole(departmentNames) {
       choices: departmentNames,
     },
   ]);
-
+  //inserts the role into the roles table adding a new job title, department ID based on the department name and a salary
   db.query(
     "INSERT INTO roles SET job_title = ?, departments_id = (SELECT departments_id FROM departments WHERE departments.departments_name = ?), salary = ?",
     [roleName, whichDepartment, salary],
@@ -189,28 +181,7 @@ async function addRole(departmentNames) {
   init();
 }
 
-function getRoles() {
-  return new Promise((resolve, reject) => {
-    db.query("SELECT job_title FROM roles", (err, results) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(results.map((object) => object.job_title));
-    });
-  });
-}
-
-function getManager() {
-  return new Promise((resolve, reject) => {
-    db.query("SELECT manager_name FROM employees", (err, results) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(results.map((object) => object.manager_name));
-    });
-  });
-}
-
+//adds an employee with a specific role and manager
 async function addEmployee(roleName, managerName) {
   let { firstName, lastName, whichRole, manager } = await inquirer.prompt([
     {
@@ -237,6 +208,7 @@ async function addEmployee(roleName, managerName) {
     },
   ]);
 
+  //inserts a new employee to the employee table adding a first name, last name, role id based on the job title and a manager name.
   db.query(
     "INSERT INTO employees SET first_name = ?, last_name = ?, roles_id = (SELECT roles_id FROM roles WHERE roles.job_title = ?), manager_name = ?",
     [firstName, lastName, whichRole, manager],
@@ -250,20 +222,7 @@ async function addEmployee(roleName, managerName) {
   init();
 }
 
-function getEmployee() {
-  return new Promise((resolve, reject) => {
-    db.query(
-      'SELECT CONCAT(employees.first_name, " ", employees.last_name) AS employeeName FROM employees',
-      (err, results) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(results.map((object) => object.employeeName));
-      }
-    );
-  });
-}
-
+//updates the role of a specific employee
 async function updateEmployeeRole(employeeName, roleName) {
   let { employee, role } = await inquirer.prompt([
     {
@@ -282,6 +241,7 @@ async function updateEmployeeRole(employeeName, roleName) {
   let fullName = employee.split(" ");
   console.log(fullName);
 
+  //query to update the employee by setting the roles id where the job_title matches that of role for the selected employee
   db.query(
     "UPDATE employees SET roles_id = (SELECT roles_id FROM roles WHERE roles.job_title = ?) WHERE first_name = ? AND last_name = ?",
     [role, fullName[0], fullName[1]],
@@ -294,3 +254,53 @@ async function updateEmployeeRole(employeeName, roleName) {
   );
   init();
 }
+
+//gets an array of a specific column in a database
+//--------------------------------------------------------------------------------------------------------------
+function getDepartmentList() {
+  return new Promise((resolve, reject) => {
+    db.query("SELECT departments_name FROM departments", (err, results) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(results.map((object) => object.departments_name));
+    });
+  });
+}
+
+function getRoles() {
+  return new Promise((resolve, reject) => {
+    db.query("SELECT job_title FROM roles", (err, results) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(results.map((object) => object.job_title));
+    });
+  });
+}
+
+function getEmployee() {
+  return new Promise((resolve, reject) => {
+    db.query(
+      'SELECT CONCAT(employees.first_name, " ", employees.last_name) AS employeeName FROM employees',
+      (err, results) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(results.map((object) => object.employeeName));
+      }
+    );
+  });
+}
+
+function getManager() {
+  return new Promise((resolve, reject) => {
+    db.query("SELECT manager_name FROM employees", (err, results) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(results.map((object) => object.manager_name));
+    });
+  });
+}
+//--------------------------------------------------------------------------------------------------
